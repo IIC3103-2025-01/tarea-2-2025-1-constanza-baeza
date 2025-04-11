@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Control de Satélites</title>
+  <link rel="stylesheet" href="style.css" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/globe.gl"></script>
+  
+</head>
+<body>
+
+  <h1>Tarea 2: Houston we have a problem</h1>
+
+  <div id="main-container">
+    <!-- IZQUIERDA: Globo -->
+    <div id="globeContainer">
+      <div id="globeViz"></div>
+      <div id="globeButtons" style="text-align: center; margin-top: 1rem;">
+        <button id="toggleZonas">Zonas</button>
+        <button id="toggleDSN">DSN</button>
+        <button id="toggleEventos">Eventos</button>
+      </div>      
+    </div>
+
+    <!-- DERECHA: Sidebar -->
+    <!-- DERECHA: Sidebar -->
+<div id="sidebar">
+    <h2>Satélites en órbita</h2>
+  
+    <!-- Filtros -->
+    <div id="filters" style="margin-bottom: 1rem;">
+      <label for="countryFilter">Filtrar por país:</label>
+      <select id="countryFilter">
+        <option value="all">Todos</option>
+      </select>
+  
+      <label for="missionFilter" style="margin-left: 1rem;">Filtrar por misión:</label>
+      <input id="missionFilter" type="text" placeholder="Ingresa misión..." />
+    </div>
+  
+    <!-- Tabla -->
+    <div id="satelliteTableContainer" style="height: 50%; overflow-y: auto; margin-bottom: 1rem;">
+      <table id="satelliteTable" border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Bandera</th>
+            <th>Satélite</th>
+            <th>Misión</th>
+            <th>Tipo</th>
+            <th>Potencia</th>
+            <th>Altitud</th>
+            <th>Vida útil</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se insertarán los datos -->
+          <button onclick="mostrarSatelites()">Ver satélites en consola</button>
+
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Chat -->
+    <div id="chatContainer" style="display: flex; flex-direction: column; height: 30%;">
+      <div id="chatLog" style="flex: 1; background: white; border: 1px solid #ccc; padding: 0.5rem; overflow-y: auto; margin-bottom: 0.5rem;"></div>
+  
+      <div style="display: flex;">
+        <input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex: 1; padding: 0.5rem;" />
+        <button id="sendChat" style="padding: 0.5rem;">Enviar</button>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
+
