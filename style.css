@@ -1,59 +1,130 @@
 body {
-    margin: 0;
-    font-family: sans-serif;
-    height: 100%;
-    background-color: #f0f0f0;
-  }
-  
-  h1 {
-    padding: 1rem;
-    margin: 0;
-    background-color: #2c3e50;
-    color: #f0f0f0;
-  }
-  
-  #output {
-    background-color: #ffffff;
-    padding: 10px;
-    border: 1px solid #ccc;
-    height: 300px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-  }
-  
-  #globeContainer {
-    width: 50vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: black;
-  }
-  
-  
-  #globeViz {
-    width: 100%;
-    height: auto; /* Deja que JS lo controle */
-  }
-  
-  
-  
-  
-  #globeViz canvas {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100%;
-    max-height: 100%;
-    display: block;
-  }
-  
-  #sidebar {
-    flex: 1;
-    padding: 1rem;
-    background-color: #f0f0f0;
-    overflow-y: auto;
-  }
+  margin: 0;
+  font-family: sans-serif;
+  height: 100%;
+  background-color: #f0f0f0;
+}
 
-  #main-container {
-    display: flex;
-    height: calc(100vh - 70px); /* Altura total menos el header */
-  }
+h1 {
+  padding: 1rem;
+  margin: 0;
+  background-color: #2c3e50;
+  color: #f0f0f0;
+}
+
+#output {
+  background-color: #ffffff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  height: 100px; /* 🔧 AUMENTADO */
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: 0.8rem; /* opcional: más compacto */
+  margin-bottom: 0.5rem;
+}
+
+
+#globeContainer {
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: black;
+}
+
+#globeViz {
+  width: 100%;
+  height: auto;
+}
+
+#globeViz canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+#sidebar h2,
+#sidebar h3 {
+  font-size: 0.9rem; /* 🔧 achicado un poco más */
+  margin: 0.5rem 0;
+}
+
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  overflow: hidden;
+}
+
+#main-container {
+  display: flex;
+  height: calc(100vh - 70px);
+}
+
+.tabla-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 0.5rem;
+}
+
+#tablaSatelites {
+  font-size: 0.75rem; /* 🔧 letra más chica aún */
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  background-color: white;
+}
+
+#tablaSatelites th,
+#tablaSatelites td {
+  border: 1px solid #ccc;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+  word-wrap: break-word;
+}
+
+#tablaSatelites th {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+#tablaSatelites td img {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+#tablaSatelites tr:hover {
+  background-color: #f5f5f5;
+}
+
+#chatContainer {
+  background-color: white;
+  border: 1px solid #ccc;
+  height: 250px; /* 🔧 más alto para ver más mensajes */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+
+#chatContainer textarea,
+#chatContainer input[type="text"] {
+  font-size: 0.8rem;
+}
+
+#chatContainer input[type="text"] {
+  padding: 6px;
+  font-size: 0.8rem;
+}
+
+#chatContainer button {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+

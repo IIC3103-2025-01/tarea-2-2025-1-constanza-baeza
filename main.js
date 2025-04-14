@@ -1,5 +1,7 @@
 
 const socket = new WebSocket("wss://tarea-2.2025-1.tallerdeintegracion.cl/connect");
+let lanzamientosActivos = [];
+
 
 let satelitesActivos = [];
 let zonasCobertura = [];
@@ -29,8 +31,11 @@ window.addEventListener("DOMContentLoaded", () => {
     .pointLabel(d => d.name); // Tooltip al pasar el mouse
 
     globe.onPointClick(info => {
+      //CUando tengamos el launch site hay que cambiar el orden de los if
       if (!info.isSatellite) {
         mostrarCoberturaAntena(info);
+      } else if (info.isSatellite) {
+        mostrarDetalleSatelite(info);
       }
     });
     
@@ -48,6 +53,7 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("toggleEventos").addEventListener("click", () => {
       alert("Aquí podrías mostrar la lista de eventos del WebSocket");
     });
+
 });
 
 
@@ -64,6 +70,7 @@ socket.onopen = () => {
 
   // Pedir los sitios de lanzamiento
   socket.send(JSON.stringify({ type: "LAUNCHSITES" }));
+  console.log("Se envio laucnsites")
 
   socket.send(JSON.stringify({ type: "SATELLITES" }));
 };
@@ -105,7 +112,25 @@ socket.onmessage = (event) => {
       }
       guardarOActualizarSatelite(update);
     });
+    renderizarTablaInformativa();
     actualizarGlobo();
+  }
+
+  if (data.type === "LAUNCH") {
+    console.log("🚀 Lanzamiento recibido:", data);
+
+    //Necesito saber los puntos de lanzamiento, si eso no se puede avanzar
+
+    lanzamientosActivos.push({
+      satellite_id: data.satellite_id,
+      //startLat: launchsite.lat,
+      //startLon: launchsite.lon,
+      endLat: data.debris_site.lat,
+      endLon: data.debris_site.long
+    });
+
+    actualizarGlobo();
+
   }
 };
  
@@ -146,6 +171,19 @@ function actualizarGlobo() {
     .pointAltitude(d => d.isSatellite ? 0.2 : 0.01)
     .pointColor(d => d.isSatellite ? "yellow" : "red")
     .pointLabel(d => d.name);
+
+  // globe
+  //   .arcsData(lanzamientosActivos)
+  //   .arcStartLat(l => l.startLat)
+  //   .arcStartLng(l => l.startLon)
+  //   .arcEndLat(l => l.endLat)
+  //   .arcEndLng(l => l.endLon)
+  //   .arcColor(() => ["#ffa500", "#ff4500"])
+  //   .arcDashLength(0.4)
+  //   .arcDashGap(1)
+  //   .arcDashInitialGap(() => Math.random())
+  //   .arcDashAnimateTime(4000)
+  //   .arcLabel(l => l.satellite_id); // Opcional: tooltip al pasar el mouse
 }
 
 //---------------------------------------------------------------------------------------------
@@ -178,12 +216,27 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
 }
 
 function mostrarCoberturaAntena(antena) {
+  console.log(antena)
   const { lat, lon, name } = antena;
+  console.log(lat)
+  console.log(lon)
+  console.log(name)
   let totalSenal = 0;
   const satelitesCercanos = [];
 
+
   satelitesActivos.forEach(sat => {
-    const dist = calcularDistanciaKm(lat, lon, sat.position.lat, sat.position.long);
+    console.log(sat)
+    const latsat = sat.position.lat
+    const lonsat = sat.position.long
+    const lat1Norm = normalizeLatitude(lat);
+    const lon1Norm = normalizeLongitude(lon);
+    const lat2Norm = normalizeLatitude(latsat);
+    const lon2Norm = normalizeLongitude(lonsat);
+
+    const dist = calcularDistanciaKm(lat1Norm, lon1Norm, lat2Norm, lon2Norm);
+
+    //const dist = calcularDistanciaKm(lat, lon, sat.position.lat, sat.position.long);
     console.log(`📏 ${sat.name}: distancia = ${dist.toFixed(2)} km, potencia = ${sat.power}`);
     if (dist <= sat.power) {
       const senal = Math.max(0, 1 - dist / sat.power);
@@ -207,4 +260,91 @@ ${satelitesCercanos.map(s => `• ${s.nombre}: ${s.senal}`).join("\n")}
 
   alert(mensaje);
 }
+
+function normalizeLatitude(lat) {
+  lat = ((lat + 90) % 360 + 360) % 360 - 90;
+  return lat;
+}
+
+function normalizeLongitude(lon) {
+  lon = ((lon + 180) % 360 + 360) % 360 - 180;
+  return lon;
+}
+
+function mostrarDetalleSatelite(info) {
+  const satelite = satelitesActivos.find(s => s.name === info.name);
+  console.log(satelite)
+
+  const org = satelite.organization ?? {};
+  const pais = org.country?.name ?? "—";
+  const codigo = org.country?.country_code?.toUpperCase();
+  const bandera = (codigo && codigo !== "XX")
+    ? `https://flagsapi.com/${codigo}/flat/16.png`
+    : null;
+
+  const texto = `
+    🛰️ ${satelite.name}
+
+    ID: ${satelite.satellite_id}
+    Organización: ${org.name ?? "—"}
+    País: ${pais}
+    Misión: ${satelite.mission ?? "—"}
+    Tipo: ${satelite.type ?? "—"}
+    Lanzamiento: ${satelite.launch_date ?? "—"}
+    Potencia: ${satelite.power ?? "—"}
+    Altitud: ${satelite.altitude ?? "—"}
+    Vida útil: ${satelite.lifetime ?? "—"} días
+    `;
+
+  alert(texto);
+
+}
+
+//-----------------------------------------------------------------------------------------------------------
+function renderizarTablaInformativa() {
+  const cuerpo = document.querySelector("#tablaSatelites tbody");
+
+  // Mostrar todos los satélites tal cual están en satelitesActivos
+  satelitesActivos.forEach(sat => {
+    const fila = document.createElement("tr");
+
+
+    fila.innerHTML = `
+      <td>${sat.satellite_id ?? "—"}</td>
+      <td>${obtenerBanderaYOrg(sat.organization)}</td>
+      <td>${sat.name ?? "—"}</td>
+      <td>${sat.mission ?? "—"}</td>
+      <td>${sat.launch_date ?? "—"}</td>
+      <td>${sat.type ?? "—"}</td>
+      <td>${sat.power ?? "—"}</td>
+      <td>${sat.altitude ?? "—"}</td>
+      <td>${sat.lifespan ?? "—"}</td>
+    `;
+
+    cuerpo.appendChild(fila);
+  });
+
+  console.log("🛰️ Satélites mostrados en tabla:", satelitesActivos.length);
+}
+
+function obtenerBanderaYOrg(organization) {
+  if (!organization || !organization.country || !organization.country.country_code) {
+    return organization?.name ?? "—";
+  }
+
+  const codigo = organization.country.country_code.toUpperCase();
+  const nombreOrg = organization.name ?? "";
+  const nombrePais = organization.country.name ?? "";
+
+  // Usamos FlagsAPI
+  const banderaUrl = `https://flagsapi.com/${codigo}/flat/16.png`;
+
+  return `
+    <img src="${banderaUrl}" alt="${codigo}" style="vertical-align: middle; margin-right: 5px;" />
+    ${nombreOrg}
+  `;
+}
+
+
+
 

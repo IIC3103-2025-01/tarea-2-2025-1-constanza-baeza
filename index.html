@@ -40,37 +40,35 @@
     </div>
   
     <!-- Tabla -->
-    <div id="satelliteTableContainer" style="height: 50%; overflow-y: auto; margin-bottom: 1rem;">
-      <table id="satelliteTable" border="1" style="width: 100%; border-collapse: collapse;">
+    <div class="tabla-container">
+      <table id="tablaSatelites">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Bandera</th>
-            <th>Satélite</th>
+            <th>Pais</th>
             <th>Misión</th>
+            <th>Satelite</th>
+            <th>Fecha Lanzamiento</th>
             <th>Tipo</th>
             <th>Potencia</th>
             <th>Altitud</th>
             <th>Vida útil</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Aquí se insertarán los datos -->
-          <button onclick="mostrarSatelites()">Ver satélites en consola</button>
-
-        </tbody>
-      </table>
+        <tbody></tbody> <!-- ¡ESTO ES CLAVE! -->
+      </table>      
     </div>
   
     <!-- Chat -->
-    <div id="chatContainer" style="display: flex; flex-direction: column; height: 30%;">
-      <div id="chatLog" style="flex: 1; background: white; border: 1px solid #ccc; padding: 0.5rem; overflow-y: auto; margin-bottom: 0.5rem;"></div>
-  
-      <div style="display: flex;">
-        <input type="text" id="chatInput" placeholder="Escribe un mensaje..." style="flex: 1; padding: 0.5rem;" />
-        <button id="sendChat" style="padding: 0.5rem;">Enviar</button>
+    <div id="chatContainer">
+      <h3>Chat con Satélites</h3>
+      <div id="output"></div>
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+        <input type="text" id="inputMensaje" placeholder="Escribe un mensaje..." style="flex-grow: 1;">
+        <button id="enviarBtn">Enviar</button>
       </div>
     </div>
+    
   </div>
   
 
